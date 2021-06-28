@@ -24,13 +24,13 @@ Clustering, Non-clustering
 
 ### Model reprresentation
 
-![image-20210628142225178](./1th week.assets/image-20210628142225178.png)
+![image-20210628142225178](1th%20week.assets/image-20210628142225178-1624890066332.png)
 
 ### Cost function
 
 Squared error function or mean squared error
 $$
-J(\theta_0, \theta_1)=\frac{1}{2m}\sum_{i=i}^{m}(\hat{y}_i-y_i)=\frac{1}{2m}\sum_{i=i}^{m}(h_\theta(x_i)-y_i)
+J(\theta_0, \theta_1)=\frac{1}{2m} \sum_{i=i}^{m}(\hat{y}_i - y_i)=\frac{1}{2m} \sum_{i=i}^{m} (h_\theta(x_i) - y_i)
 $$
 
 
@@ -38,7 +38,7 @@ $$
 
 ### Gradient descent
 
-![img](./1th week.assets/bn9SyaDIEeav5QpTGIv-Pg_0d06dca3d225f3de8b5a4a7e92254153_Screenshot-2016-11-01-23.48.26.png)
+![img](1th%20week.assets/bn9SyaDIEeav5QpTGIv-Pg_0d06dca3d225f3de8b5a4a7e92254153_Screenshot-2016-11-01-23.48.26-1624890053009.png)
 
 repeat until convergence
 $$
