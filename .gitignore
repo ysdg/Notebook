@@ -1,1 +1,8 @@
 *.code-workspace
+
+
+# ignore code for matlab
+*.zip
+*.m
+*.txt
+*.mat

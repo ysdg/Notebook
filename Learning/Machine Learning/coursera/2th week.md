@@ -14,7 +14,10 @@ The hypothesis function:
 $$
 h_\theta(x)
 =\theta_0 + \theta_1x_1 + \theta_2x_2 + ... + \theta_nx_n
-=[\theta_0\quad\theta_1 ... \theta_n]\left[ \begin{matrix}x_0\\x_1\\...\\x_n \end{matrix}\right]
+=[\theta_0\quad\theta_1 ... \theta_n]
+	\left[ 
+	\begin{matrix}x_0 \\ x_1 \\ ... \\ x_n \end{matrix}
+	\right]
 =\theta^Tx
 $$
 In the function:
