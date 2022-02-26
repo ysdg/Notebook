@@ -4,7 +4,7 @@
 
 ## 无锁编程（Lock-Free Programming）
 
-阅读文章《[An Introduction to Lock-Free Programming](https://preshing.com/20120612/an-introduction-to-lock-free-programming/)》,对无所编程有了初步理解，此处简要记录。
+阅读文章《[An Introduction to Lock-Free Programming](https://preshing.com/20120612/an-introduction-to-lock-free-programming/)》,对无锁编程有了初步理解，此处简要记录。
 
 首先，什么是无锁编程。通常，简单定义为不含互斥锁的程序。但是，此定义一方面过于狭义，不包含信号量、事件等高级锁操作。另一方面，若理解为所有互斥操作，又过于广义，对实际上的大型程序，基本不可能实现无锁编程。因此，文章重新描述了无锁编程概念，即不阻塞其他（线程）任务的执行（non-bolcking）。
 
