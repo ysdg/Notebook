@@ -18,3 +18,23 @@
 | Compare-And-Swap Loops      | CAS  | RMW最常见场景，即在循环中重复尝试比较和交换的事务操作 |
 | Sequential Consistency      | \    | 顺序一致性，所有线程对内存的操作顺序一致              |
 
+## 
+
+## 权限模型
+
+目前，存在如下两种权限模型：
+
+| 模型 | 全称                           | 直译               | 思想                                           | 优点                 | 缺点                 |
+| ---- | ------------------------------ | ------------------ | ---------------------------------------------- | -------------------- | -------------------- |
+| RBAC | role-based access control      | 基于角色的访问控制 | 角色掌握资源（即权限）<br>人员属于角色         | 构建模型简单         | 难以维护大型控制模型 |
+| ABAC | attribute-based access control | 基于属性的访问控制 | 属性决定权限，包含：<br>对象、资源、操作、环境 | 授权颗粒度高，更灵活 | 构建模型复杂         |
+
+
+
+## 代码生成
+
+代码生成技术：
+
+1. [Boost.Preprocessor](http://www.boost.org/doc/libs/release/libs/preprocessor/doc/index.html)
+2. [Cog](http://nedbatchelder.com/code/cog/)
+3. pump(**P**ump is **U**seful for **M**eta **P**rogramming): googleTest中使用，但现在已经找不到了。
