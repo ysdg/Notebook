@@ -6,3 +6,7 @@
 *.m
 *.txt
 *.mat
+code/python/flask/
+code/python/streamlit/
+code/python/multi-streamlit/
+code/python/testPic/
