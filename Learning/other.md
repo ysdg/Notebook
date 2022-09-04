@@ -50,3 +50,13 @@
 | ------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
 | you-get | 高速下载各大网站视频 | you-get url，执行下载<br />参考：https://github.com/soimort/you-get/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E |
 | ffmpeg  | 下载m3u8视频         | ffmpeg -i m3u8_url filename.mp4<br />参考：https://zhuanlan.zhihu.com/p/142349349                             |
+
+
+
+## 开源协议
+
+开源协议，从宽松至严格：
+
+参考[中国开源发展研究分析2022](https://www.infoq.cn/minibook)
+
+![1662269335748](image/other/1662269335748.png)
