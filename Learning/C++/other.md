@@ -18,3 +18,16 @@ void print_json(const Json::Value& value, bool emitUTF8) {
     writer->write(value, &std::cout);
 }
 ```
+
+## CMake控制文件警告
+
+**问题**：C++编码过程，使用protobuf，而生成.cc和.h文件，带有太多警告。导致，整个项目无法避免警告，从而，无法通过解决编译期警告，解决编译问题。
+
+**解决方案**：CMake控制特定文件的警告。操作如下：
+
+```cmake
+set_source_files_properties(somefile.cpp PROPERTIES COMPILE_FLAGS "-w")
+
+```
+
+使用 `set_source_files_properties()` 函数为这两个特定的文件设置编译选项。`COMPILE_FLAGS` 是一个 CMake 属性，用于设置编译器的选项。使用 `-w` 选项来禁止警告。
