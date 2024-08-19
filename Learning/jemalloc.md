@@ -1,46 +1,46 @@
 # jemalloc
 
-## ±àÒë
+## ç¼–è¯‘
 
-Õı³£±àÒë£º[jemalloc/INSTALL.md at dev ¡¤ jemalloc/jemalloc (github.com)](https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md)
+æ­£å¸¸ç¼–è¯‘ï¼š[jemalloc/INSTALL.md at dev Â· jemalloc/jemalloc (github.com)](https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md)
 
-ÔÊĞídebugºÍ·ÖÎö£º
+å…è®¸debugå’Œåˆ†æï¼š
 
 ```bash
 ./configure --enable-debug --enable-prof
 make -j16
 ```
 
-## Ê¹ÓÃ
+## ä½¿ç”¨
 
-Ê¹ÓÃ·½Ê½£º[Getting Started ¡¤ jemalloc/jemalloc Wiki (github.com)](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)
+ä½¿ç”¨æ–¹å¼ï¼š[Getting Started Â· jemalloc/jemalloc Wiki (github.com)](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)
 
 ```bash
-# ÉèÖÃlibjemallocÂ·¾¶£¬¿ÉÖ±½ÓÆô¶¯³ÌĞò
+# è®¾ç½®libjemallocè·¯å¾„ï¼Œå¯ç›´æ¥å¯åŠ¨ç¨‹åº
 export LD_PRELOAD=/lib/<libjemalloc.so>
 
 
 ```
 
-## ÄÚ´æ·ÖÎö
+## å†…å­˜åˆ†æ
 
-ÄÚ´æ·ÖÎö£º[Use Case: Leak Checking ¡¤ jemalloc/jemalloc Wiki (github.com)](https://github.com/jemalloc/jemalloc/wiki/Use-Case%3A-Leak-Checking)
+å†…å­˜åˆ†æï¼š[Use Case: Leak Checking Â· jemalloc/jemalloc Wiki (github.com)](https://github.com/jemalloc/jemalloc/wiki/Use-Case%3A-Leak-Checking)
 
-ÍøÓÑ·ÖÎö£º[jemallocÄÚ´æĞ¹Â©·ÖÎö - ¼òÊé (jianshu.com)](https://www.jianshu.com/p/4f9689ffca2d)
+ç½‘å‹åˆ†æï¼š[jemallocå†…å­˜æ³„æ¼åˆ†æ - ç®€ä¹¦ (jianshu.com)](https://www.jianshu.com/p/4f9689ffca2d)
 
 ```base
 
-#ÉèÖÃÔËĞĞµ÷ÊÔ¡£lg_prof_interval:20ÖĞµÄ20±íÊ¾1MB(2^20)£¬prof:trueÊÇ´ò¿ªprofiling
+#è®¾ç½®è¿è¡Œè°ƒè¯•ã€‚lg_prof_interval:20ä¸­çš„20è¡¨ç¤º1MB(2^20)ï¼Œprof:trueæ˜¯æ‰“å¼€profiling
 export MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true,prof:true,lg_prof_interval:30,prof_prefix:jeprof.out
-#ÉèÖÃlibjemalloc£¬w±íÊ¾Ğ´Èëdump
+#è®¾ç½®libjemallocï¼Œwè¡¨ç¤ºå†™å…¥dump
 export LD_PRELOAD=/lib/<libjemalloc.so> w
 
-#Éú³Éjeprof.out.${pid}.heap dumpÎÄ¼şºó£¬Ê¹ÓÃjeprof·ÖÎöÄÚ´æ
-#²é¿´ÄÚ´æ·ÖÅä
+#ç”Ÿæˆjeprof.out.${pid}.heap dumpæ–‡ä»¶åï¼Œä½¿ç”¨jeprofåˆ†æå†…å­˜
+#æŸ¥çœ‹å†…å­˜åˆ†é…
 jeprof --show_bytes `which w` jeprof.${pid}.${index}.heap
-#Éú³ÉpdfµÄµ÷ÓÃÎÄ¼ş
+#ç”Ÿæˆpdfçš„è°ƒç”¨æ–‡ä»¶
 jeprof --show_bytes --pdf `which w` jeprof.out.${pid}.${index}.heap > ${pid}.pdf
-#±È½ÏÁ½¸öÄÚ´æ·ÖÅä£¬¿ÉÊ¹ÓÃtop²é¿´·ÖÅä´óĞ¡
+#æ¯”è¾ƒä¸¤ä¸ªå†…å­˜åˆ†é…ï¼Œå¯ä½¿ç”¨topæŸ¥çœ‹åˆ†é…å¤§å°
 jeprof ${program_name}--base=jeprof.out.${pid}.${index}.heap jeprof.out.${pid}.${index}.heap
 
 

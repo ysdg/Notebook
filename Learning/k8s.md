@@ -1,104 +1,104 @@
-# K8S³£ÓÃÃüÁî
+# K8Så¸¸ç”¨å‘½ä»¤
 
-## pod²Ù×÷
+## podæ“ä½œ
 
 ```bash
-# ½øÈëtsdb-dproxy
+# è¿›å…¥tsdb-dproxy
 kubectl exec -it ?$(kubectl get po | grep tsdb-dproxy | awk '{print $1}') -- bash
 
-# ½øÈëtsdb-service
+# è¿›å…¥tsdb-service
 kubectl exec -it tsdb-service-0 -c=tsdb-service -- bash
 
-# ²é¿´ÄÚ´æ£º
+# æŸ¥çœ‹å†…å­˜ï¼š
 kubectl top pods | sort -k3 -hr
 
-# k8sÀ­°ü&É¾°ü£¬×Ô¶¯Æô¶¯£º
+# k8sæ‹‰åŒ…&åˆ åŒ…ï¼Œè‡ªåŠ¨å¯åŠ¨ï¼š
 docker pull registry.supos.ai/jenkins/tsdb-service:5.00.01.00-C-M6-T2 && kubectl delete po $(kubectl get po | grep tsdb-service | awk '{print $1}')
 ```
 
-## ±à¼­Æô¶¯²ÎÊı
+## ç¼–è¾‘å¯åŠ¨å‚æ•°
 
 ```bash
-# ĞŞ¸Ätsdb-service
+# ä¿®æ”¹tsdb-service
 kubectl edit sts tsdb-service
 
-#ĞŞ¸Ätsdb-dproxy
+#ä¿®æ”¹tsdb-dproxy
 kubectl edit deploy tsdb-dproxy
 
-# ¿ª·Åip¶Ë¿Ú
+# å¼€æ”¾ipç«¯å£
 kubectl edit svc tsdb-service-dt
-#typeÖĞµÄClusterIP£¬¸Ä³ÉNodePort
+#typeä¸­çš„ClusterIPï¼Œæ”¹æˆNodePort
 ```
 
-## ²é¿´ÈÕÖ¾
+## æŸ¥çœ‹æ—¥å¿—
 
 ```bash
-# ²é¿´ÈÕÖ¾
+# æŸ¥çœ‹æ—¥å¿—
 kubectl logs -f $(kubectl get po | grep tsdb-api | awk '{print $1}')
 kubectl logs tsdb-service-0 -c=tsdb-service
 
-# ²é¿´ÃèÊö
+# æŸ¥çœ‹æè¿°
 kubectl describe pod my-pod 
 kubectl describe pod tsdb-service-0
 ```
 
-## ÍøÂç
+## ç½‘ç»œ
 
 ```bash
-# k8s ×ª·¢
+# k8s è½¬å‘
 kubectl port-forward tsdb-service-0 30000:17022 --address=0.0.0.0
-# Ö±½ÓÊ¹ÓÃsocat×ª·¢¡£k8sÎŞ·¨·ÃÎÊsocatÊ±Ê¹ÓÃ
+# ç›´æ¥ä½¿ç”¨socatè½¬å‘ã€‚k8sæ— æ³•è®¿é—®socatæ—¶ä½¿ç”¨
 socat TCP-LISTEN:local_port,fork TCP:kubernetes_node_ip:kubernetes_node_port
 socat TCP-LISTEN:30000,fork TCP:$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):17022
 curl -X GET "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):17022/api/ps/cmd?dest=BsRtdService.BsRtdService&cmd=opr%20devinfo"
 curl -X GET "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):17022/api/ps/cmd?dest=BsRtdService.BsRtdService&cmd=tag%20dump%20t3:dhb_col_ae/ae"
 
-#²é¿´pod ip
+#æŸ¥çœ‹pod ip
 kubectl get pods -o wide
 
-#ÍøÂç×¥°ü£º
+#ç½‘ç»œæŠ“åŒ…ï¼š
 nsenter -t $(docker inspect $(docker ps | grep tsdb-service-0 | grep -av pause | awk '{print $1}') | jq .[0].State.Pid) -n ngrep -x tcp and port 19592
 
-# ²é¿´ÏûÏ¢£º
+# æŸ¥çœ‹æ¶ˆæ¯ï¼š
 kubectl get po -owide |grep tsdb-service | grep -av migrate| awk '{print $6}' | xargs -i http get http://{}:19592/service-api/rtdb/v2/database
 ```
 
-## ÈßÓà
+## å†—ä½™
 
 ```bash
-# Í¨¹ıÍ£Ö¹redis£¬½øĞĞÇĞÖ÷£º
+# é€šè¿‡åœæ­¢redisï¼Œè¿›è¡Œåˆ‡ä¸»ï¼š
 kubectl scale deploy middleware-redis --replicas=0
 
-# ²é¿´Ö÷´ÓĞÅÏ¢
+# æŸ¥çœ‹ä¸»ä»ä¿¡æ¯
 cat /var/local/share/cluster/cluster-info.json
 ```
 
-## ¼¯Èº
+## é›†ç¾¤
 
 ```bash
-# »ñÈ¡Ö÷½Úµã
+# è·å–ä¸»èŠ‚ç‚¹
 http GET http://192.168.12.57:8848/nacos/v1/cs/configs group==DEFAULT_GROUP dataId==tsdb-service:default
 curl  -X GET  "http://192.168.237.26:8848/nacos/v1/cs/configs?group=DEFAULT_GROUP&dataId=tsdb-service:default"
 
 
-# ĞŞ¸ÄÖ÷½Úµã
+# ä¿®æ”¹ä¸»èŠ‚ç‚¹
 http PUT http://100.114.209.16:19599/inter-api/tsdb-service/deploy/api/v1/services/status X-Tenant-Id:dt id=tsdb-service-0
 ```
 
 
 
-## docker±¾µØÍÆËÍ
+## dockeræœ¬åœ°æ¨é€
 
 ```bash
-# À­È¡°ü
+# æ‹‰å–åŒ…
 docker pull registry.supos.ai/jenkins/tsdb-migrate-tools:5.00.01.00-C-R1-T2-ARM64
 
-# ±¾µØ´òtag
+# æœ¬åœ°æ‰“tag
 docker tag registry.supos.ai/jenkins/tsdb-migrate-tools:5.00.01.00-C-R1-T2-ARM64 registry:5000/jenkins/tsdb-migrate-tools:5.00.01.00-C-R1-T2
 
-# Ïò±¾µØÍÆËÍ
+# å‘æœ¬åœ°æ¨é€
 docker push registry:5000/jenkins/tsdb-migrate-tools:5.00.01.00-C-R1-T2
 
-# Ìá½»±¾µØÈİÆ÷
+# æäº¤æœ¬åœ°å®¹å™¨
 docker commit your-container-id new-image-name
 ```

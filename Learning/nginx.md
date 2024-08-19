@@ -1,8 +1,8 @@
 # nginx
 
-## nginx¶àÂ·¸´ÓÃ
+## nginxå¤šè·¯å¤ç”¨
 
-»ùÓÚnginx£¬½øĞĞ¸÷ÖÖĞ­ÒéµÄ¶àÂ·¸´ÓÃ
+åŸºäºnginxï¼Œè¿›è¡Œå„ç§åè®®çš„å¤šè·¯å¤ç”¨
 
-1. ÒÀÀµÄ£¿éngx_stream_ssl_preread_module¡££¨°²×°£ºapt install nginx-full£©
+1. ä¾èµ–æ¨¡å—ngx_stream_ssl_preread_moduleã€‚ï¼ˆå®‰è£…ï¼šapt install nginx-fullï¼‰
 2.
