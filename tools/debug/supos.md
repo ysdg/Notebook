@@ -11,6 +11,7 @@ kubectl exec -it tsdb-service-0 -c=tsdb-service -- bash
  
 # 查看内存：
 kubectl top pods | sort -k3 -hr
+cat /sys/fs/cgroup/memory/memory.stat
  
 # k8s拉包&删包，自动启动：
 docker pull registry.supos.ai/jenkins/tsdb-service:5.00.01.00-C-M6-T2 && kubectl delete po $(kubectl get po | grep tsdb-service | awk '{print $1}')
@@ -48,32 +49,50 @@ kubectl describe pod tsdb-service-0
 
 ```bash
 # k8s 转发
-kubectl port-forward tsdb-service-0 30000:17022 --address=0.0.0.0
+kubectl port-forward tsdb-service-0 30001:19592 --address=0.0.0.0
 # 直接使用socat转发。k8s无法访问socat时使用
 socat TCP-LISTEN:local_port,fork TCP:kubernetes_node_ip:kubernetes_node_port
-socat TCP-LISTEN:30000,fork TCP:$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):17022
-curl -X GET "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):17022/api/ps/cmd?dest=BsRtdService.BsRtdService&cmd=opr%20devinfo%20DefaultVirtualDevice"
-curl -X GET "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):17022/api/ps/cmd?dest=BsRtdService.BsRtdService&cmd=tag%20dump%20t3:dhb_col_ae/ae"
-curl -X GET "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):19592/service-api/rtdb/v2/database"
-curl -H "X-Tenant-Id:dt" -X POST "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):19592/service-api/rtdb/v2/meta/collectors/select" -d '{"page_index":1,"page_size": 1}'
-curl -H "X-Tenant-Id: dt"  -X GET "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):19592/service-api/rtdb/v2/meta/tags" -d '{"filter":{"conditions":[{"field":"device.code","opr":"=","value":{"str_val":"dt:yq_sim1"}}]},"page_index":1,"page_size":1}'
+socat TCP-LISTEN:30000,fork TCP:127.0.0.1:17022
 
-curl -H "X-Tenant-Id: dt"  -X GET "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):19592/service-api/rtdb/v2/meta/tags/changes" -d '{"query":{"filter":{"conditions":[{"field":"name","opr":"in","values":{"values":[{"str_val":"col1/str2"}]}}]},"result_type":1}}'
-curl -X DELETE "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):19592/service-api/rtdb/v2/database" -d '{"name": "bb"}'
+curl -X GET "http://127.0.0.1:17022/api/ps/cmd?dest=BsRtdService.BsRtdService&cmd=opr%20devinfo%20DefaultVirtualDevice"            
+curl -X GET "http://127.0.0.1:17022/api/ps/cmd?dest=BsRtdService.BsRtdService&cmd=tag%20dump%20t3:dhb_col_ae/ae"
+curl -X GET "http://127.0.0.1:17022/api/ps/cmd?dest=BsRtdService.BsRtdService&cmd=sd%20dump%20tag%20test2:col26/bool1"
+
+# 组态-位号、设备、库
+curl -H "X-Tenant-Id: dt" -H "X-Source-Id: from_supos_oodm_metadata_management"  -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"mode":3,"tag":[{"alias":"Property_125","archive":{"aggregation":false,"compress":false,"deadtime":0,"offset":0.0,"storage":false,"timeout":10000},"data_type":12,"device":{"code":"VirtualDevType","item":"/system/Template_64/exportInstance01/system/Property_125"},"group":{"id":"exportInstance01"},"name":"/system/Template_64/exportInstance01/system/Property_125","range":{"erh":100.0,"erl":0.0},"readonly":false,"type":5}]}'
+curl -H "X-Tenant-Id:dt" -X DELETE "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"tag_names":[]}'
+curl -H "X-Tenant-Id:test1" -X DELETE "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/condition" -d '{"and_or": false,"conditions": [ {"field": "group.id","value": {"str_val": "lblob" } } ]}'
+curl -H "X-Tenant-Id:dt" -X PUT "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/props" -d '{"properties": [ {"field": "archive.storage","value": {"b_val": true } }, {"field": "archive.aggregation","value": {"b_val": false } } ],"conditions": {"field": "group.id","value": {"str_val": "col8" } }}'
+curl -H "X-Tenant-Id: dt"  -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"filter":{"conditions":[{"field":"device.code","opr":"=","value":{"str_val":"dt:yq_sim1"}}]},"page_index":1, "page_size":1}'
+
+curl -H "X-Tenant-Id: dt"  -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/changes" -d '{"query":{"filter":{"conditions":[{"field":"name","opr":"in","values":{"values":[{"str_val":"col1/str2"}]}}]},"result_type":1}}'
+curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors" -d '{"mode": 3,"update_cfgs": [{"code": "c85c32f0-c4f2-11ef-a94c-3fe0e3de8d43","endpoint_id": "test1","id": "yq_sim1"}], "fields": ["endpoint_id"]}'
+curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors/select" -d '{"page_index":1,"page_size": 1}'
+curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors/select" -d '{"full_filter":{"conditions":[{"field":"id","opr":"=","value":{"str_val":"yq_sim12"}}]}}'
+curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors/select" -d '{"full_filter":{"conditions":[{"field":"type","opr":"=","value":{"str_val":"StdDataService"}}]}}'
+curl -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/database"
+curl -X DELETE "http://127.0.0.1:19592/service-api/rtdb/v2/database" -d '{"name": "bb"}'
+curl -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/database" -d '{"name": "c0f5"}'
+curl -H "X-Tenant-Id: dt" -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/database/duration"
 
 curl -X GET "http://$(kubectl  get pod -o wide | grep lake-resource-0 | awk '{print $6}'):32564/api/v3/instance/lake-mariadb"
+
+# 时序库连接器
 
 
 # 查看授权服务接口
 curl -X GET "http://$(kubectl  get pod -o wide | grep license-service | awk '{print $6}'):8080/service-api/license/quota/feature/tenant?tenantId=dt&productNo=1&featureId=4"
 
-# 根据租户，查询设备
-curl -H "X-Tenant-Id:dt" -X POST "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):19592/service-api/rtdb/v2/meta/collectors/select" -d '{"full_filter":{"conditions":[{"field":"id","opr":"=","value":{"str_val":"yq_sim12"}}]}}'
-
-curl -H "X-Tenant-Id:dt" -X DELETE "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"tag_names":[]}'
+# 实时
+curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/rtdata/tags" -d '{"tags": [""],"vst_precision": 1}'
  
  
 ngrep -W byline -qd any 'service-api/license/quota/statistic/tenant' tcp port 8080
+ngrep -W byline -qd any '/service-api/rtdb/v2/meta/tags' tcp port 19592
+ngrep -W byline -qd any '/service-api/rtdb/v2/meta' host 100.96.217.172
+
+ngrep -W byline -qd any '/service-api/rtdb/v2/database/duration' tcp port 19592
+ngrep -W byline -qd any 'inter-api/tsdb-service/api/v1/event/'
 
 
 #查看pod ip
@@ -81,7 +100,8 @@ kubectl get pods -o wide
  
 #网络抓包：
 nsenter -t $(docker inspect $(docker ps | grep tsdb-service-0 | grep -av pause | awk '{print $1}') | jq .[0].State.Pid) -n ngrep -x tcp and port 19592
-docker inspect $(docker ps | grep tsdb-service-0 | grep -av pause | awk '{print $1}')
+docker inspect $(docker ps | grep tsdb-service-0 | grep -av pause | awk '{print $1}') | grep Pid
+nsenter -t 180047 -n ngrep -W byline -qd any '/service-api/rtdb/v2/meta' 
  
 # 查看消息：
 kubectl get po -owide |grep tsdb-service | grep -av migrate| awk '{print $6}' | xargs -i http get http://{}:19592/service-api/rtdb/v2/database
@@ -92,6 +112,9 @@ kubectl get po -owide |grep tsdb-service | grep -av migrate| awk '{print $6}' | 
 ```bash
 # 通过停止redis，进行切主：
 kubectl scale deploy middleware-redis --replicas=0
+kubectl scale deploy tsdb-api-gateway --replicas=1
+kubectl scale sts tsdb-service --replicas=0
+HMGET realtime:snapshot:value:tenant:dt 
  
 # 查看主从信息
 cat /var/local/share/cluster/cluster-info.json
@@ -103,13 +126,15 @@ cat /var/local/share/cluster/cluster-info.json
 # 获取主节点
 http GET http://127.0.0.1:8848/nacos/v1/cs/configs group==DEFAULT_GROUP dataId==tsdb-service:default
 curl  -X GET  "http://127.0.0.1:8848/nacos/v1/cs/configs?group=DEFAULT_GROUP&dataId=tsdb-service:default"
- 
- 
- 
-# 修改主节点
+# 修改主节点 
 http PUT http://127.0.0.1:19599/inter-api/tsdb-service/deploy/api/v1/services/status X-Tenant-Id:dt id=tsdb-service-0
+curl  -X GET "http://127.0.0.1:19599/inter-api/tsdb-service/deploy/api/v1/healths"
+curl  -X GET "http://127.0.0.1:8081/open-api/supos/suplake-tsdb/tsdb-service/status"
+curl  -X POST "http://127.0.0.1:8081/inter-api/tsdb-service/api/deployment/collector"
 # 获取注册节点，启动的r2t信息，是否为空
 curl -X GET '127.0.0.1:8848/nacos/v1/ns/instance/list?serviceName=DEFAULT_GROUP@@tsdb-service-internal'
+ 
+ 
 ```
 
 ## docker本地推送
@@ -127,11 +152,15 @@ docker push registry:5000/jenkins/tsdb-migrate-tools:5.00.01.00-C-R1-T2
  
 # 提交本地容器
 docker commit your-container-id new-image-name
- 
+#  registry:5000/jenkins/tsdb-service:5.00.03.01-C-R3-T1-R
+
+
 #导出镜像
-docker save -o tsdb-service.tar registry.supos.ai/jenkins/tsdb-service:5.00.02.00-C-R11-T3
+docker save -o tsdb-service.tar registry.supos.ai/jenkins/tsdb-service:5.00.03.01-C-R1-T2
 #导入镜像 
 docker load -i tsdb-service.tar
+
+docker stats 
 ```
 
 ## Influxdb查询
@@ -178,6 +207,8 @@ set args  -configfile -nodeport 17020 -dpname Project_001 -dppath /data
 set env LD_LIBRARY_PATH=/var/lib/isys
  
  
+#  允许dump大小
+ulimit -c unlimited
 #jemalloc 启用调试配置
 export MALLOC_CONF="tcache:false,junk:true"
 #启用dump配置
@@ -193,6 +224,7 @@ iostat -x 1 10
 df -h
 #查看目录大小
 du -sh
+du -h --max-depth=1 | sort -h
 #查看文件描述符
 ll /proc/$(pgrep BsAPI)/fd
 kill -9 $(pgrep BsMemoryTag)

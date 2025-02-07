@@ -1,5 +1,20 @@
 # K8S常用命令
 
+## 概念
+
+![1736230818910](image/k8s/1736230818910.png)
+
+围绕pod的workload概念
+
+| 概念        | 说明                                                |  |
+| ----------- | --------------------------------------------------- | - |
+| Deployment  | 用于管理无状态应用程序的Pods，支持滚动更新和扩缩容  |  |
+| StatefulSet | 用于管理有状态应用程序，保证Pods的顺序和持久性      |  |
+| DaemonSet   | 确保在每个节点上运行一个Pod，通常用于集群管理或监控 |  |
+| ReplicaSet  | 用于确保指定数量的Pod副本在运行                     |  |
+| Job/CronJob | 用于管理一次性任务或定期任务                        |  |
+|             |                                                     |  |
+
 ## pod操作
 
 ```bash
@@ -84,8 +99,6 @@ curl  -X GET  "http://192.168.237.26:8848/nacos/v1/cs/configs?group=DEFAULT_GROU
 # 修改主节点
 http PUT http://100.114.209.16:19599/inter-api/tsdb-service/deploy/api/v1/services/status X-Tenant-Id:dt id=tsdb-service-0
 ```
-
-
 
 ## docker本地推送
 
