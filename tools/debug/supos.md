@@ -61,19 +61,32 @@ curl -X GET "http://127.0.0.1:17022/api/ps/cmd?dest=BsRtdService.BsRtdService&cm
 # 组态-位号、设备、库
 curl -H "X-Tenant-Id: dt" -H "X-Source-Id: from_supos_oodm_metadata_management"  -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"mode":3,"tag":[{"alias":"Property_125","archive":{"aggregation":false,"compress":false,"deadtime":0,"offset":0.0,"storage":false,"timeout":10000},"data_type":12,"device":{"code":"VirtualDevType","item":"/system/Template_64/exportInstance01/system/Property_125"},"group":{"id":"exportInstance01"},"name":"/system/Template_64/exportInstance01/system/Property_125","range":{"erh":100.0,"erl":0.0},"readonly":false,"type":5}]}'
 curl -H "X-Tenant-Id:dt" -X DELETE "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"tag_names":[]}'
+curl -H "X-Tenant-Id:dt" -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/meta/status"
 curl -H "X-Tenant-Id:test1" -X DELETE "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/condition" -d '{"and_or": false,"conditions": [ {"field": "group.id","value": {"str_val": "lblob" } } ]}'
 curl -H "X-Tenant-Id:dt" -X PUT "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/props" -d '{"properties": [ {"field": "archive.storage","value": {"b_val": true } }, {"field": "archive.aggregation","value": {"b_val": false } } ],"conditions": {"field": "group.id","value": {"str_val": "col8" } }}'
-curl -H "X-Tenant-Id: dt"  -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"filter":{"conditions":[{"field":"device.code","opr":"=","value":{"str_val":"dt:yq_sim1"}}]},"page_index":1, "page_size":1}'
 
+curl -H "X-Tenant-Id:dt" -X PUT "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"mode":3,"fields":["readonly"],"tag":[{"name":"TG/WRITE","readonly":false}]}'
+
+
+curl -H "X-Tenant-Id: dt"  -X POST "http://127.0.0.1:19592/inter-api/tsdb-service/rtdb/v2/meta/std/tags" -d '{"mode": 0, "is_all": false, "std_name": "IP21", "tag_names": [ "_1101FI72001_SUM_PV" ] }'
+curl -H "X-Tenant-Id: dt"  -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"filter":{"conditions":[{"field":"device.code","opr":"=","value":{"str_val":"dt:yq_sim1"}}]},"page_index":1, "page_size":1}'
+curl -H "X-Tenant-Id: dt"  -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"filter":{"conditions":[{"field":"id","opr":"=","value":{"ul_val":1}}]},"page_index":1, "page_size":1}'
+curl -H "X-Tenant-Id: dt" -X POST "http://127.0.0.1:19592/inter-api/tsdb-service/rtdb/v2/testStdConnection?sub_type=std" -d '{  "std_url": "192.168.235.43:9850",  "access_token":  "bf527980-0b83-11f0-8a7d-a5862ab9babd"}'
 curl -H "X-Tenant-Id: dt"  -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/changes" -d '{"query":{"filter":{"conditions":[{"field":"name","opr":"in","values":{"values":[{"str_val":"col1/str2"}]}}]},"result_type":1}}'
 curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors" -d '{"mode": 3,"update_cfgs": [{"code": "c85c32f0-c4f2-11ef-a94c-3fe0e3de8d43","endpoint_id": "test1","id": "yq_sim1"}], "fields": ["endpoint_id"]}'
+curl -H "X-Tenant-Id:dt" -X POST "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):19592/service-api/rtdb/v2/meta/collectors" -d '{"mode": 3,"update_cfgs": [{"id":"yq_std1", "sub_type": "std"}], "fields": ["sub_type"]}'
+curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors" -d '{"mode": 3,"update_cfgs": [{"id":"yq_std1", "sub_type": "std"}], "fields": ["sub_type"]}'
 curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors/select" -d '{"page_index":1,"page_size": 1}'
+curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:8081/inter-api/tsdb-service/api/deployment/auth" -d '{"page_index":1,"page_size": 1}'
+curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/source" -d '{"page_index":1,"page_size": 1}'
+curl -X POST "http://127.0.0.1:19598/inter-api/tsdb-service/smt/tags/list" -d '{"filters": [ {"field": "tenant","opr": "=","value": "dt" }, {"field": "device.name","opr": "=","value": "Virtual Device" } ],"no_total": false,"offset": 0,"count": 1}'
 curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors/select" -d '{"full_filter":{"conditions":[{"field":"id","opr":"=","value":{"str_val":"yq_sim12"}}]}}'
 curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors/select" -d '{"full_filter":{"conditions":[{"field":"type","opr":"=","value":{"str_val":"StdDataService"}}]}}'
 curl -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/database"
 curl -X DELETE "http://127.0.0.1:19592/service-api/rtdb/v2/database" -d '{"name": "bb"}'
 curl -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/database" -d '{"name": "c0f5"}'
 curl -H "X-Tenant-Id: dt" -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/database/duration"
+curl -H "X-Tenant-Id: dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/database/duration"  -d '{"duration": 0, "name": "dt"}'
 
 curl -X GET "http://$(kubectl  get pod -o wide | grep lake-resource-0 | awk '{print $6}'):32564/api/v3/instance/lake-mariadb"
 
@@ -82,10 +95,11 @@ curl -X GET "http://$(kubectl  get pod -o wide | grep lake-resource-0 | awk '{pr
 
 # 查看授权服务接口
 curl -X GET "http://$(kubectl  get pod -o wide | grep license-service | awk '{print $6}'):8080/service-api/license/quota/feature/tenant?tenantId=dt&productNo=1&featureId=4"
+curl -X GET "http://$(kubectl  get pod -o wide | grep license-service | awk '{print $6}'):8080/service-api/license/quota/feature?featureId=4&productNo=1"
 
 # 实时
 curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/rtdata/tags" -d '{"tags": [""],"vst_precision": 1}'
- 
+curl -X GET "http://127.0.0.1:19592/inter-api/tsdb-service/rtdb/v2/healths" 
  
 ngrep -W byline -qd any 'service-api/license/quota/statistic/tenant' tcp port 8080
 ngrep -W byline -qd any '/service-api/rtdb/v2/meta/tags' tcp port 19592
@@ -209,6 +223,7 @@ set env LD_LIBRARY_PATH=/var/lib/isys
  
 #  允许dump大小
 ulimit -c unlimited
+echo '/tmp/core.%t.%e.%p' | sudo tee /proc/sys/kernel/core_pattern
 #jemalloc 启用调试配置
 export MALLOC_CONF="tcache:false,junk:true"
 #启用dump配置

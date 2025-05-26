@@ -4,6 +4,8 @@
 
 ![1736230818910](image/k8s/1736230818910.png)
 
+[参考：7.2 容器技术的原理与演进 | 深入高可用系统原理与设计](https://www.thebyte.com.cn/container/orchestration.html#_7-2-5-%E8%B6%85%E4%BA%B2%E5%AF%86%E5%AE%B9%E5%99%A8%E7%BB%84-pod)
+
 围绕pod的workload概念
 
 | 概念        | 说明                                                |  |
