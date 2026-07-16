@@ -72,7 +72,8 @@ curl -H "X-Tenant-Id: dt"  -X POST "http://127.0.0.1:19592/inter-api/tsdb-servic
 curl -H "X-Tenant-Id: dt"  -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"filter":{"conditions":[{"field":"device.code","opr":"=","value":{"str_val":"dt:yq_sim1"}}]},"page_index":1, "page_size":1}'
 curl -H "X-Tenant-Id: dt"  -X GET "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags" -d '{"filter":{"conditions":[{"field":"id","opr":"=","value":{"ul_val":1}}]},"page_index":1, "page_size":1}'
 curl -H "X-Tenant-Id: dt" -X POST "http://127.0.0.1:19592/inter-api/tsdb-service/rtdb/v2/testStdConnection?sub_type=std" -d '{  "std_url": "192.168.235.43:9850",  "access_token":  "bf527980-0b83-11f0-8a7d-a5862ab9babd"}'
-curl -H "X-Tenant-Id: dt"  -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/changes" -d '{"query":{"filter":{"conditions":[{"field":"name","opr":"in","values":{"values":[{"str_val":"col1/str2"}]}}]},"result_type":1}}'
+curl -H "X-Tenant-Id: dt"  -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/changes" -d '{"query":{"filter":{"conditions":[{"field":"name","opr":"in","values":{"values":[{"str_val":"col1/str2"}]}}]}},"result_type":1}'
+curl -H "X-Tenant-Id: dt"  -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/tags/changes" -d '{"query":{"filter":{"conditions":[{"field":"source","opr":"=","value":{"str_val":"sim1"}}],"and_or":false},"order_by":{"field":"id","desc":false},"page_index":1,"page_size":1},"result_type":1}'
 curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors" -d '{"mode": 3,"update_cfgs": [{"code": "c85c32f0-c4f2-11ef-a94c-3fe0e3de8d43","endpoint_id": "test1","id": "yq_sim1"}], "fields": ["endpoint_id"]}'
 curl -H "X-Tenant-Id:dt" -X POST "http://$(kubectl  get pod -o wide | grep tsdb-service-0 | awk '{print $6}'):19592/service-api/rtdb/v2/meta/collectors" -d '{"mode": 3,"update_cfgs": [{"id":"yq_std1", "sub_type": "std"}], "fields": ["sub_type"]}'
 curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/meta/collectors" -d '{"mode": 3,"update_cfgs": [{"id":"yq_std1", "sub_type": "std"}], "fields": ["sub_type"]}'
@@ -100,6 +101,8 @@ curl -X GET "http://$(kubectl  get pod -o wide | grep license-service | awk '{pr
 # 实时
 curl -H "X-Tenant-Id:dt" -X POST "http://127.0.0.1:19592/service-api/rtdb/v2/rtdata/tags" -d '{"tags": [""],"vst_precision": 1}'
 curl -X GET "http://127.0.0.1:19592/inter-api/tsdb-service/rtdb/v2/healths" 
+curl -X POST "http://127.0.0.1:19592/isys/api/v1/login_trust"  -d '{"client_code":"dc34fd40-f838-11ec-a729-39a604eadf42"}'
+curl -X GET "http://127.0.0.1:8081/inter-api/tsdb-service/api/v1/event/enozhpqy-ebih-zwug-g1a8-03nbdmfy0hai" 
  
 ngrep -W byline -qd any 'service-api/license/quota/statistic/tenant' tcp port 8080
 ngrep -W byline -qd any '/service-api/rtdb/v2/meta/tags' tcp port 19592
